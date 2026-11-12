@@ -19,15 +19,15 @@ internal sealed class ConcurrentBatchBuffer<T>
 #endif
         _lock = new();
     private Storage _storage = null;
-    private readonly int _capacity;
-    private readonly int _batchThreshold;
+    private readonly long _capacity;
+    private readonly long _batchThreshold;
     private bool _readyForRead = false;
     private bool _full = false;
     private bool _closed = false;
     private TaskCompletionSource _readBlocker = null;
     private TaskCompletionSource _writeBlocker = null;
 
-    public ConcurrentBatchBuffer(int batchThreshold, int capacity)
+    public ConcurrentBatchBuffer(long batchThreshold, long capacity)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(batchThreshold, 0);
         ArgumentOutOfRangeException.ThrowIfLessThan(capacity, 0);
@@ -44,7 +44,7 @@ internal sealed class ConcurrentBatchBuffer<T>
     {
         internal class BatchList
         {
-            public int ContentSize = 0;
+            public long ContentSize = 0;
             public List<T> Items = new();
 
             public void Clear()
@@ -56,8 +56,8 @@ internal sealed class ConcurrentBatchBuffer<T>
 
         internal readonly SortedDictionary<long, BatchList> _batchDict = new();
         internal bool _empty = true;
-        internal int _size = 0;
-        internal int _maxBatchSize = 0;
+        internal long _size = 0;
+        internal long _maxBatchSize = 0;
 
         public Storage()
         {
@@ -76,7 +76,7 @@ internal sealed class ConcurrentBatchBuffer<T>
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        internal void Add(T item, int size, int contentSize, int batchThreshold, int capacity, out bool readyForRead, out bool full)
+        internal void Add(T item, long size, long contentSize, long batchThreshold, long capacity, out bool readyForRead, out bool full)
         {
             if (!_batchDict.TryGetValue(item.BatchNumber, out var list))
             {
@@ -125,12 +125,12 @@ internal sealed class ConcurrentBatchBuffer<T>
     /// <summary>
     /// Gets the maximum size that the buffer allows for storage.
     /// </summary>
-    public int Capacity => _capacity;
+    public long Capacity => _capacity;
 
     /// <summary>
     /// Gets the minimum size allowed for batching data, used with notifying the consumer.
     /// </summary>
-    public int BatchThreshold => _batchThreshold;
+    public long BatchThreshold => _batchThreshold;
 
     public bool IsClosed => Volatile.Read(ref _closed);
 
@@ -259,7 +259,7 @@ internal sealed class ConcurrentBatchBuffer<T>
         return WriteAsyncCore(item, size, contentSize, forceReadable, cancellationToken);
     }
 
-    private async Task WriteAsyncCore(T item, int size, int contentSize, bool forceReadable, CancellationToken cancellationToken)
+    private async Task WriteAsyncCore(T item, long size, long contentSize, bool forceReadable, CancellationToken cancellationToken)
     {
         while (true)
         {

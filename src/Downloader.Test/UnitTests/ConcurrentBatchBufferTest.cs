@@ -287,12 +287,12 @@ public class ConcurrentBatchBufferTest(ITestOutputHelper output) : BaseTestClass
         {
         }
 
-        public Data(long batchNumber, int size, int contentSize)
+        public Data(long batchNumber, long size, long contentSize)
             : this(batchNumber, size, contentSize, null)
         {
         }
 
-        public Data(long batchNumber, int size, int contentSize, TaskCompletionSource completionSource)
+        public Data(long batchNumber, long size, long contentSize, TaskCompletionSource completionSource)
         {
             BatchNumber = batchNumber;
             Size = size;
@@ -307,9 +307,9 @@ public class ConcurrentBatchBufferTest(ITestOutputHelper output) : BaseTestClass
 
         public long BatchNumber { get; set; }
 
-        public int Size { get; set; }
+        public long Size { get; set; }
 
-        public int ContentSize { get; set; }
+        public long ContentSize { get; set; }
 
         public TaskCompletionSource CompletionSource { get; set; }
 

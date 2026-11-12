@@ -17,10 +17,10 @@ internal interface IMeasurableBatchData
     /// If the data is stored in an array, the <see cref="Size"/> is the length of the array.
     /// Typically, the array length is greater than the <see cref="ContentSize"/>.
     /// </remarks>
-    int Size { get; }
+    long Size { get; }
 
     /// <summary>
     /// Gets the size of the actual data content.
     /// </summary>
-    int ContentSize { get; }
+    long ContentSize { get; }
 }
