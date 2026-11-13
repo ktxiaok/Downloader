@@ -132,6 +132,8 @@ internal sealed class ConcurrentBatchBuffer<T>
     /// </summary>
     public long BatchThreshold => _batchThreshold;
 
+    public bool IsEmpty => Volatile.Read(ref _storage)?._empty ?? true;
+
     public bool IsClosed => Volatile.Read(ref _closed);
 
     /// <summary>

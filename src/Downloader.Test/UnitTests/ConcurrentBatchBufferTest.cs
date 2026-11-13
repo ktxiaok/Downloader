@@ -7,6 +7,23 @@ public class ConcurrentBatchBufferTest(ITestOutputHelper output) : BaseTestClass
     private static readonly TimeSpan BlockedReadWriteWaitTime = TimeSpan.FromSeconds(1);
 
     [Fact(Timeout = 10_000)]
+    public async Task IsEmptyPropertyTest()
+    {
+        var buffer = new ConcurrentBatchBuffer<Data>(0, 999);
+
+        Assert.True(buffer.IsEmpty);
+
+        await buffer.WriteAsync(new(1, 1, 1));
+        Assert.False(buffer.IsEmpty);
+
+        var storage = await buffer.SwapAsync(null);
+        Assert.True(buffer.IsEmpty);
+
+        storage = await buffer.SwapAsync(storage);
+        Assert.True(buffer.IsEmpty);
+    }
+
+    [Fact(Timeout = 10_000)]
     public async Task SwappedStorageIsCleared()
     {
         ConcurrentBatchBuffer<Data>.Storage storage = null;
